@@ -68,10 +68,10 @@ class ToolAwareSequentialThinkingServer {
 			this.available_tools.set(tool.name, tool);
 		});
 
-		console.error(
-			'Available tools:',
-			Array.from(this.available_tools.keys()),
-		);
+		// console.error(
+		// 	'Available tools:',
+		// 	Array.from(this.available_tools.keys()),
+		// );
 	}
 
 	private validateThoughtData(input: unknown): ThoughtData {
@@ -126,85 +126,109 @@ class ToolAwareSequentialThinkingServer {
 			validated.previous_steps = data.previous_steps as StepRecommendation[];
 		}
 
-		if (data.remaining_steps) {
-			if (!Array.isArray(data.remaining_steps)) {
-				throw new Error('remaining_steps must be an array');
+		if (data.remaining_tasks) {
+			if (!Array.isArray(data.remaining_tasks)) {
+				throw new Error('remaining_tasks must be an array');
 			}
-			validated.remaining_steps = data.remaining_steps as string[];
+			validated.remaining_tasks = data.remaining_tasks as string[];
 		}
 
 		return validated;
 	}
 
-	private formatRecommendation(step: StepRecommendation): string {
-		const tools = step.recommended_tools
-			.map((tool) => {
-				const alternatives = tool.alternatives?.length 
-					? ` (alternatives: ${tool.alternatives.join(', ')})`
-					: '';
-				const inputs = tool.suggested_inputs 
-					? `\n    Suggested inputs: ${JSON.stringify(tool.suggested_inputs)}`
-					: '';
-				return `  - ${tool.tool_name} (priority: ${tool.priority})${alternatives}
-    Rationale: ${tool.rationale}${inputs}`;
-			})
-			.join('\n');
+// 	private formatRecommendation(step: StepRecommendation): string {
+// 		const tools = step.recommended_tools
+// 			.map((tool) => {
+// 				const alternatives = tool.alternatives?.length 
+// 					? ` (alternatives: ${tool.alternatives.join(', ')})`
+// 					: '';
+// 				const inputs = tool.suggested_inputs 
+// 					? `\n    Suggested inputs: ${JSON.stringify(tool.suggested_inputs)}`
+// 					: '';
+// 				return `  - ${tool.tool_name} (priority: ${tool.priority})${alternatives}
+//     Rationale: ${tool.rationale}${inputs}`;
+// 			})
+// 			.join('\n');
 
-		return `Step: ${step.step_description}
-Recommended Tools:
-${tools}
-Expected Outcome: ${step.expected_outcome}${
-			step.next_step_conditions
-				? `\nConditions for next step:\n  - ${step.next_step_conditions.join('\n  - ')}`
-				: ''
-		}`;
-	}
+// 		return `Step: ${step.step_description}
+// Recommended Tools:
+// ${tools}
+// Expected Outcome: ${step.expected_outcome}${
+// 			step.next_step_conditions
+// 				? `\nConditions for next step:\n  - ${step.next_step_conditions.join('\n  - ')}`
+// 				: ''
+// 		}`;
+// 	}
 
-	private formatThought(thoughtData: ThoughtData): string {
-		const {
-			thought_number,
-			total_thoughts,
-			thought,
-			is_revision,
-			revises_thought,
-			branch_from_thought,
-			branch_id,
-			current_step,
-		} = thoughtData;
+// 	private formatThought(thoughtData: ThoughtData): string {
+// 		const {
+// 			thought_number,
+// 			total_thoughts,
+// 			thought,
+// 			is_revision,
+// 			revises_thought,
+// 			branch_from_thought,
+// 			branch_id,
+// 			current_step,
+// 		} = thoughtData;
 
-		let prefix = '';
-		let context = '';
+// 		let prefix = '';
+// 		let context = '';
 
-		if (is_revision) {
-			prefix = chalk.yellow('🔄 Revision');
-			context = ` (revising thought ${revises_thought})`;
-		} else if (branch_from_thought) {
-			prefix = chalk.green('🌿 Branch');
-			context = ` (from thought ${branch_from_thought}, ID: ${branch_id})`;
-		} else {
-			prefix = chalk.blue('💭 Thought');
-			context = '';
-		}
+// 		if (is_revision) {
+// 			prefix = chalk.yellow('🔄 Revision');
+// 			context = ` (revising thought ${revises_thought})`;
+// 		} else if (branch_from_thought) {
+// 			prefix = chalk.green('🌿 Branch');
+// 			context = ` (from thought ${branch_from_thought}, ID: ${branch_id})`;
+// 		} else {
+// 			prefix = chalk.blue('💭 Thought');
+// 			context = '';
+// 		}
 
-		const header = `${prefix} ${thought_number}/${total_thoughts}${context}`;
-		let content = thought;
+// 		const header = `${prefix} ${thought_number}/${total_thoughts}${context}`;
+// 		let content = thought;
 
-		// Add recommendation information if present
-		if (current_step) {
-			content = `${thought}\n\nRecommendation:\n${this.formatRecommendation(current_step)}`;
-		}
+// 		// Add recommendation information if present
+// 		if (current_step) {
+// 			content = `${thought}\n\nRecommendation:\n${this.formatRecommendation(current_step)}`;
+// 		}
 
-		const border = '─'.repeat(
-			Math.max(header.length, content.length) + 4,
-		);
+// 		// Word wrap content to max 100 characters per line
+// 		const wrappedContent = content.split('\n').map(line => {
+// 			const words = line.split(' ');
+// 			let currentLine = '';
+// 			let wrappedLines = [];
+			
+// 			words.forEach(word => {
+// 				if ((currentLine + ' ' + word).length <= 100) {
+// 					currentLine += (currentLine ? ' ' : '') + word;
+// 				} else {
+// 					wrappedLines.push(currentLine);
+// 					currentLine = word;
+// 				}
+// 			});
+// 			if (currentLine) wrappedLines.push(currentLine);
+// 			return wrappedLines;
+// 		}).flat();
 
-		return `
-┌${border}┐
-│ ${header} │
-├${border}┤
-│ ${content.padEnd(border.length - 2)} │
-└${border}┘`;
-	}
+// 		const maxWidth = Math.min(
+// 			Math.max(header.length, ...wrappedContent.map(l => l.length)),
+// 			100
+// 		) + 4;
+
+// 		const border = '─'.repeat(maxWidth);
+// 		const formattedContent = wrappedContent
+// 			.map(line => `│ ${line.padEnd(maxWidth - 2)} │`)
+// 			.join('\n');
+
+// 		return `
+// ┌${border}┐
+// │ ${header.padEnd(maxWidth - 2)} │
+// ├${border}┤
+// ${formattedContent}
+// └${border}┘`;
+// 	}
 
 	public async processThought(input: unknown): Promise<{
 		content: Array<{ type: string; text: string }>;
@@ -239,8 +263,8 @@ Expected Outcome: ${step.expected_outcome}${
 				this.branches[validatedInput.branch_id].push(validatedInput);
 			}
 
-			const formattedThought = this.formatThought(validatedInput);
-			console.error(formattedThought);
+			// const formattedThought = this.formatThought(validatedInput);
+			// // console.error(formattedThought);
 
 			return {
 				content: [
@@ -248,6 +272,7 @@ Expected Outcome: ${step.expected_outcome}${
 						type: 'text',
 						text: JSON.stringify(
 							{
+								thought: validatedInput.thought,
 								thought_number: validatedInput.thought_number,
 								total_thoughts: validatedInput.total_thoughts,
 								next_thought_needed:
@@ -256,7 +281,7 @@ Expected Outcome: ${step.expected_outcome}${
 								thought_history_length: this.thought_history.length,
 								current_step: validatedInput.current_step,
 								previous_steps: validatedInput.previous_steps,
-								remaining_steps: validatedInput.remaining_steps,
+								remaining_tasks: validatedInput.remaining_tasks,
 							},
 							null,
 							2,
@@ -343,7 +368,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
 }));
 
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
-	if (request.params.name === 'sequentialthinking_tools') {
+	if (request.params.name === 'nootebook') {
 		return thinkingServer.processThought(request.params.arguments);
 	}
 
@@ -361,10 +386,11 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 async function runServer() {
 	const transport = new StdioServerTransport();
 	await server.connect(transport);
-	console.error('Sequential Thinking MCP Server running on stdio');
+	// console.error('Sequential Thinking MCP Server running on stdio');
 }
 
 runServer().catch((error) => {
 	console.error('Fatal error running server:', error);
 	process.exit(1);
 });
+

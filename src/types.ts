@@ -30,7 +30,7 @@ export interface ThoughtData {
 	// Recommendation-related fields
 	current_step?: StepRecommendation;  // Current step being considered
 	previous_steps?: StepRecommendation[];  // Steps already recommended
-	remaining_steps?: string[];  // High-level descriptions of upcoming steps
+	remaining_tasks?: string[];  // High-level descriptions of upcoming steps
 }
 
 export interface ServerConfig {

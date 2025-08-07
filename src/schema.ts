@@ -7,20 +7,20 @@ Each thought can build on, question, or revise previous insights as understandin
 IMPORTANT: When initializing this tool, you must pass all available tools that you want the sequential thinking process to be able to use. The tool will analyze these tools and provide recommendations for their use.
 
 When to use this tool:
-- Breaking down complex problems into steps
+- Breaking down problems into tarefas small
 - Planning and design with room for revision
 - Analysis that might need course correction
 - Problems where the full scope might not be clear initially
-- Problems that require a multi-step solution
+- Tasks that require a multi-step solution
 - Tasks that need to maintain context over multiple steps
 - Situations where irrelevant information needs to be filtered out
 - When you need guidance on which tools to use and in what order
 
 Key features:
-- You can adjust total_thoughts up or down as you progress
-- You can question or revise previous thoughts
-- You can add more thoughts even after reaching what seemed like the end
-- You can express uncertainty and explore alternative approaches
+- You should adjust total_thoughts to up as you progress
+- You should question and revise previous thoughts
+- You should add more thoughts even after reaching what seemed like the end
+- You should express uncertainty and explore alternative approaches
 - Not every thought needs to build linearly - you can branch or backtrack
 - Generates a solution hypothesis
 - Verifies the hypothesis based on the Chain of Thought steps
@@ -30,15 +30,25 @@ Key features:
 - Tracks previous recommendations and remaining steps
 
 Parameters explained:
-- thought: Your current thinking step, which can include:
-* Regular analytical steps
-* Revisions of previous thoughts
-* Questions about previous decisions
-* Realizations about needing more analysis
-* Changes in approach
-* Hypothesis generation
-* Hypothesis verification
-* Tool recommendations and rationale
+- thought: Your current thinking step, which should include:
+  * Regular analytical steps
+  * Revisions of previous thoughts
+  * Questions about previous decisions
+  * Realizations about needing more analysis
+  * Changes in approach
+  * Hypothesis generation
+  * Hypothesis verification
+  * Tool recommendations and rationale
+	##Important rule:
+	Do **not** include any future steps, to-do items, or pending tasks here.
+	Those belong strictly in the **remaining_tasks** field.
+
+	Never write phrases like:
+	- "Next I will..."
+	- "I still need to..."
+	- "Pending: ..."
+	Such content must go in **remaining_tasks**, not **thought**.
+
 - next_thought_needed: True if you need more thinking, even if at what seemed like the end
 - thought_number: Current number in sequence (can go beyond initial total if needed)
 - total_thoughts: Current estimate of thoughts needed (can be adjusted up/down)
@@ -53,7 +63,20 @@ Parameters explained:
 * expected_outcome: What to expect from this step
 * next_step_conditions: Conditions to consider for the next step
 - previous_steps: Steps already recommended
-- remaining_steps: High-level descriptions of upcoming steps
+- remaining_tasks: Checklist-style list of high-level upcoming tasks.
+	This format is **mandatory**:
+	- Each task **must start** with either:
+	- "🗹" → for tasks that have already been completed
+	- "☐" → for tasks not yet done (pending)
+
+	Whenever a task is already done, it **must** be marked with "🗹". Do not leave completed tasks without the checkmark.
+
+	Do not use other formats like "-", "*", or plain text without the prefix.
+
+	Examples:
+	🗹 Test integration flow
+	☐ Set up environment
+	☐ Configure database
 
 You should:
 1. Start with an initial estimate of needed thoughts, but be ready to adjust
@@ -73,7 +96,7 @@ You should:
 15. Only set next_thought_needed to false when truly done and a satisfactory answer is reached`;
 
 export const SEQUENTIAL_THINKING_TOOL: Tool = {
-	name: 'sequentialthinking_tools',
+	name: 'nootebook',
 	description: TOOL_DESCRIPTION,
 	inputSchema: {
 		type: 'object',
@@ -243,9 +266,24 @@ export const SEQUENTIAL_THINKING_TOOL: Tool = {
 					required: ['step_description', 'recommended_tools', 'expected_outcome']
 				}
 			},
-			remaining_steps: {
+			remaining_tasks: {
 				type: 'array',
-				description: 'High-level descriptions of upcoming steps',
+				description: `Checklist-style list of high-level upcoming tasks.
+
+				This format is **mandatory**:
+				- Each task **must start** with either:
+				- "🗹" → for tasks not yet done (pending)
+				- "☐" → for tasks that have already been completed
+
+				 Whenever a task is already done, it **must** be marked with "🗹". Do not leave completed tasks without the checkmark.
+
+				 Do not use other formats like "-", "*", or plain text without the prefix.
+
+				Examples:
+				🗹 Test integration flow
+				☐ Set up environment
+				☐ Configure database`,
+
 				items: {
 					type: 'string'
 				}
