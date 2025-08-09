@@ -41,13 +41,13 @@ Parameters explained:
   * Tool recommendations and rationale
 	##Important rule:
 	Do **not** include any future steps, to-do items, or pending tasks here.
-	Those belong strictly in the **remaining_tasks** field.
+	Those belong strictly in the **task_checklist** field.
 
 	Never write phrases like:
 	- "Next I will..."
 	- "I still need to..."
 	- "Pending: ..."
-	Such content must go in **remaining_tasks**, not **thought**.
+	Such content must go in **task_checklist**, not **thought**.
 
 - next_thought_needed: True if you need more thinking, even if at what seemed like the end
 - thought_number: Current number in sequence (can go beyond initial total if needed)
@@ -63,7 +63,7 @@ Parameters explained:
 * expected_outcome: What to expect from this step
 * next_step_conditions: Conditions to consider for the next step
 - previous_steps: Steps already recommended
-- remaining_tasks: Checklist-style list of high-level upcoming tasks.
+- task_checklist: Checklist-style list of high-level upcoming tasks.
 	This format is **mandatory**:
 	- Each task **must start** with either:
 	- "🗹" → for tasks that have already been completed
@@ -266,7 +266,7 @@ export const SEQUENTIAL_THINKING_TOOL: Tool = {
 					required: ['step_description', 'recommended_tools', 'expected_outcome']
 				}
 			},
-			remaining_tasks: {
+			task_checklist: {
 				type: 'array',
 				description: `Checklist-style list of high-level upcoming tasks.
 

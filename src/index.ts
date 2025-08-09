@@ -126,11 +126,11 @@ class ToolAwareSequentialThinkingServer {
 			validated.previous_steps = data.previous_steps as StepRecommendation[];
 		}
 
-		if (data.remaining_tasks) {
-			if (!Array.isArray(data.remaining_tasks)) {
-				throw new Error('remaining_tasks must be an array');
+		if (data.task_checklist) {
+			if (!Array.isArray(data.task_checklist)) {
+				throw new Error('task_checklist must be an array');
 			}
-			validated.remaining_tasks = data.remaining_tasks as string[];
+			validated.task_checklist = data.task_checklist as string[];
 		}
 
 		return validated;
@@ -281,7 +281,7 @@ class ToolAwareSequentialThinkingServer {
 								thought_history_length: this.thought_history.length,
 								current_step: validatedInput.current_step,
 								previous_steps: validatedInput.previous_steps,
-								remaining_tasks: validatedInput.remaining_tasks,
+								task_checklist: validatedInput.task_checklist,
 							},
 							null,
 							2,
