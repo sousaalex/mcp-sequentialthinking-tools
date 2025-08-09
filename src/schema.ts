@@ -63,20 +63,22 @@ Parameters explained:
 * expected_outcome: What to expect from this step
 * next_step_conditions: Conditions to consider for the next step
 - previous_steps: Steps already recommended
-- task_checklist: Checklist-style list of high-level upcoming tasks.
-	This format is **mandatory**:
-	- Each task **must start** with either:
-	- "🗹" → for tasks that have already been completed
-	- "☐" → for tasks not yet done (pending)
+- task_checklist:  **Create a "Checklist-style" TODO list of high-level upcoming tasks following these rules strictly:**
 
-	Whenever a task is already done, it **must** be marked with "🗹". Do not leave completed tasks without the checkmark.
+				1. **Format is mandatory** – every task **must start** with exactly one of these two symbols (including the space after):
 
-	Do not use other formats like "-", "*", or plain text without the prefix.
+					* \`🗹 \` → task completed.
+					* \`☐ \` → task pending.
+				2. **Never** use other prefixes (like \`-\`, \`*\`, numbers, bullets, or plain text).
+				3. There must be **one space** between the symbol and the task description.
+				4. Mark **all completed tasks** with \`🗹\`. Do **not** leave a completed task without the checkmark.
+				5. Keep tasks **short, clear, and action-oriented** (start with a verb).
+				6. **No extra formatting** like bold, italics, or quotes inside the list.
 
-	Examples:
-	🗹 Test integration flow
-	☐ Set up environment
-	☐ Configure database
+				**Example output:**
+				🗹 Test integration flow
+				☐ Set up environment
+				☐ Configure database
 
 You should:
 1. Start with an initial estimate of needed thoughts, but be ready to adjust
@@ -268,18 +270,19 @@ export const SEQUENTIAL_THINKING_TOOL: Tool = {
 			},
 			task_checklist: {
 				type: 'array',
-				description: `Checklist-style list of high-level upcoming tasks.
+				description: ` **Create a "Checklist-style" TODO list of high-level upcoming tasks following these rules strictly:**
 
-				This format is **mandatory**:
-				- Each task **must start** with either:
-				- "🗹" → for tasks not yet done (pending)
-				- "☐" → for tasks that have already been completed
+				1. **Format is mandatory** – every task **must start** with exactly one of these two symbols (including the space after):
 
-				 Whenever a task is already done, it **must** be marked with "🗹". Do not leave completed tasks without the checkmark.
+					* \`🗹 \` → task completed.
+					* \`☐ \` → task pending.
+				2. **Never** use other prefixes (like \`-\`, \`*\`, numbers, bullets, or plain text).
+				3. There must be **one space** between the symbol and the task description.
+				4. Mark **all completed tasks** with \`🗹\`. Do **not** leave a completed task without the checkmark.
+				5. Keep tasks **short, clear, and action-oriented** (start with a verb).
+				6. **No extra formatting** like bold, italics, or quotes inside the list.
 
-				 Do not use other formats like "-", "*", or plain text without the prefix.
-
-				Examples:
+				**Example output:**
 				🗹 Test integration flow
 				☐ Set up environment
 				☐ Configure database`,
